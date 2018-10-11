@@ -2,6 +2,8 @@
 var express = require('express'),
     app     = express(),
     morgan  = require('morgan');
+var fs = require('fs')
+var https = require('https')
     
 Object.assign=require('object-assign')
 
@@ -118,8 +120,14 @@ app.use(function(err, req, res, next){
 initDb(function(err){
   console.log('Error connecting to Mongo. Message:\n'+err);
 });
-
-app.listen(port, ip);
+https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert')
+}, app)
+    .listen(3000, function () {
+        console.log('Example app listening on port 3000! Go to https://localhost:3000/')
+    })
+//app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app ;
